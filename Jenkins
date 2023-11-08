@@ -1,0 +1,33 @@
+pipeline {
+	agent any
+	stages{
+	  stage("clean"){
+	      steps {
+	          cleanWs()
+	      }
+	  }
+	  stage ("clone") {
+	    steps {
+		    git branch: 'main', url: 'https://github.com/balaji5070/sample-html-app.git'
+	        sh "ls"
+	    }
+	  }
+	  stage("image") {
+	    steps{
+	      sh "docker build -t rbalaji2001/html ."
+	    }
+	  }
+	  stage("dockerhub"){
+	      steps{
+	          sh "docker login -u rbalaji2001 -p Balaji3152001"
+	          sh "docker push rbalaji2001/html"
+	      }
+	  }
+	  stage ("docker container"){
+	      steps {
+	          sh "docker rm -f html-app"
+	          sh "docker run -d --name html-app -p 82:80 rbalaji2001/html"
+	      }
+	  }
+	}
+}
